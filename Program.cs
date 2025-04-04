@@ -53,7 +53,7 @@ namespace ImageClassificationPractice
             };
 
             // Provide a non-empty contract name.
-            EstimatorChain<CustomMappingTransformer<ImageData, ImageDataWithBytes>>? customMapping = mlContext.Transforms.CustomMapping<ImageData, ImageDataWithBytes>(
+            EstimatorChain<CustomMappingTransformer<ImageData, ImageDataWithBytes>>? customMapping = mlContext.Transforms.CustomMapping(
                 loadImageBytes, contractName: "LoadImageBytesMapping")
                 // Append a cache checkpoint to break the chain for saving.
                 .AppendCacheCheckpoint(mlContext);
@@ -92,7 +92,9 @@ namespace ImageClassificationPractice
             PredictionEngine<ImageData, ImagePrediction>? predictor = mlContext.Model.CreatePredictionEngine<ImageData, ImagePrediction>(model);
             ImageData sampleImage = new ImageData { ImagePath = Path.Combine(DataDirectory, "sample.png"), Label = "" };
             ImagePrediction? prediction = predictor.Predict(sampleImage);
-            Console.WriteLine($"Predicted label for sample image: {prediction.PredictedLabel}");
+
+            // Output the predicted label and confidence percentage.
+            Console.WriteLine($"Predicted label for sample image: {prediction.PredictedLabel} with {prediction.Score.Max():P2} confidence");
         }
     }
 }
